@@ -1,7 +1,6 @@
 use anyhow::*;
 use image::Rgba;
 use std::path::PathBuf;
-use std::io::Write;
 
 fn search(data: &[[u8; 4]], val: &[u8; 4]) -> Option<usize> {
     let val = unsafe { val.align_to::<u32>().1[0] };
@@ -51,21 +50,14 @@ pub fn encode(path: PathBuf) -> Result<(Vec<u8>, String)> {
     );
     println!("{:?}: {}", path.clone(), colors.len());
 
-    use flate2::write::GzEncoder;
-    use flate2::Compression;
-
-    let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
+    let mut bytes = Vec::new();
     {
-        encoder.write_all(width.as_ne_bytes()).unwrap();
-        encoder
-            .write_all((colors.len() as u32).as_ne_bytes())
-            .unwrap();
-        encoder
-            .write_all(unsafe { colors.as_slice().align_to::<u32>().1.align_to::<u8>().1 })
-            .unwrap();
-        encoder.write_all(data.as_slice()).unwrap();
+        bytes.extend(width.as_ne_bytes());
+        bytes.extend((colors.len() as u32).as_ne_bytes());
+        bytes.extend(unsafe { colors.align_to::<u8>().1 });
+        bytes.extend(data.as_slice());
     }
-    let bytes = encoder.finish().unwrap();
+    //let bytes = encoder.finish().unwrap();
 
     Ok((
         bytes,

@@ -4,11 +4,12 @@ pub mod decode;
 pub mod encode;
 
 use anyhow::*;
-use rayon::prelude::*;
 
-pub fn par_encode_all(rel_path: String) -> Result<Vec<(Vec<u8>, String)>> {
+#[cfg(feature = "par_tools")]
+pub fn par_encode_all(glob_str: &str) -> Result<Vec<(Vec<u8>, String)>> {
+    use rayon::prelude::*;
     let mut paths = Vec::new();
-    paths.extend(glob::glob(&*rel_path)?);
+    paths.extend(glob::glob(&*glob_str)?);
 
     paths
         .into_par_iter()
@@ -19,9 +20,11 @@ pub fn par_encode_all(rel_path: String) -> Result<Vec<(Vec<u8>, String)>> {
         .collect::<Result<Vec<(Vec<u8>, String)>>>()
 }
 
-pub fn par_decode_all(rel_path: String) -> Result<Vec<Vec<u8>>> {
+#[cfg(feature = "par_tools")]
+pub fn par_decode_all(glob_str: &str) -> Result<Vec<Vec<u8>>> {
+    use rayon::prelude::*;
     let mut paths = Vec::new();
-    paths.extend(glob::glob(&*rel_path)?);
+    paths.extend(glob::glob(&*glob_str)?);
 
     paths
         .into_par_iter()
@@ -31,4 +34,3 @@ pub fn par_decode_all(rel_path: String) -> Result<Vec<Vec<u8>>> {
         .into_iter()
         .collect::<Result<Vec<Vec<u8>>>>()
 }
-

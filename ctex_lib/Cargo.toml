@@ -1,12 +1,15 @@
 [package]
-name = "texgz_encoder"
+name = "ctex"
 version = "0.1.0"
 authors = ["Sean Moulton <bananamoulton@gmail.com>"]
 edition = "2018"
 
+[features]
+par_tools = ["rayon"]
+
 [dependencies]
+lz4 = "1.23.2"
 anyhow = "1.0.40"
-flate2 = "1.0.20"
 glob = "0.3.0"
-rayon = "1.5.0"
 image = "0.23.14"
+rayon = { version = "1.5.0", optional = true }

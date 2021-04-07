@@ -1,12 +1,8 @@
 use anyhow::*;
-use flate2::read::GzDecoder;
-use std::io::{Read, };
 use std::path::PathBuf;
 
 pub fn decode(gz_buf: &Vec<u8>) -> Result<Vec<u8>> {
-    let mut d = GzDecoder::new(gz_buf.as_slice());
-    let mut buf = Vec::new();
-    d.read_to_end(&mut buf)?;
+    let buf = gz_buf;
 
     let width = unsafe {
         buf.get(0..4)
@@ -44,11 +40,9 @@ pub fn decode(gz_buf: &Vec<u8>) -> Result<Vec<u8>> {
 }
 
 pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
-    let gz_buf = std::fs::read(path)?.to_vec();
-    let mut d = GzDecoder::new(gz_buf.as_slice());
-    let mut buf = Vec::new();
-    d.read_to_end(&mut buf)?;
+    let buf = std::fs::read(path)?.to_vec();
 
+    let now = std::time::Instant::now();
     let width = unsafe {
         buf.get(0..4)
             .expect("Incorrect input format")
@@ -77,9 +71,12 @@ pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
 
     let mut out: Vec<[u8; 4]> = Vec::with_capacity((width * width) as usize);
 
+    // TODO: This can be optimized
     for i in 0..(width * width) {
         out.push(palette[data[i as usize] as usize]);
     }
+
+    println!("decode: {} ms", now.elapsed().as_millis());
 
     Ok(unsafe { out.align_to::<u8>().1.to_vec() })
 }
