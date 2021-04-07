@@ -1,0 +1,35 @@
+/*
+fn main() -> Result<()> {
+    let mut paths = Vec::new();
+    paths.extend(glob::glob("input/*.png")?);
+
+    let now = std::time::Instant::now();
+    let images: Vec<(Vec<u8>, String)> = paths
+        .into_par_iter()
+        .flatten()
+        .map(encode::encode)
+        .collect::<Vec<Result<(Vec<u8>, String)>>>()
+        .into_iter()
+        .collect::<Result<Vec<(Vec<u8>, String)>>>()?;
+    println!("encoded elapsed: {}ms", now.elapsed().as_millis());
+
+    let now = std::time::Instant::now();
+    let decoded: Vec<Vec<u8>> = images
+        .clone()
+        .into_par_iter()
+        .map(|(img, ..)| decode::decode(&img))
+        .collect::<Vec<Result<Vec<u8>>>>()
+        .into_iter()
+        .collect::<Result<Vec<Vec<u8>>>>()?;
+    println!("decoded elapsed: {}ms", now.elapsed().as_millis());
+
+    for (img, name) in images {
+        std::fs::File::create(&*format!("output/{}.tex.gz", name))
+            .unwrap()
+            .write_all(img.as_slice())
+            .unwrap();
+    }
+
+    Ok(())
+}
+*/

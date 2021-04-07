@@ -1,10 +1,7 @@
-#![feature(num_as_ne_bytes)]
-
 use anyhow::*;
 use image::Rgba;
-use rayon::prelude::*;
-use std::io::Write;
 use std::path::PathBuf;
+use std::io::Write;
 
 fn search(data: &[[u8; 4]], val: &[u8; 4]) -> Option<usize> {
     let val = unsafe { val.align_to::<u32>().1[0] };
@@ -17,7 +14,7 @@ fn search(data: &[[u8; 4]], val: &[u8; 4]) -> Option<usize> {
     return None;
 }
 
-fn load_and_compress(path: PathBuf) -> Result<(Vec<u8>, String)> {
+pub fn encode(path: PathBuf) -> Result<(Vec<u8>, String)> {
     let img = image::open(path.clone()).unwrap();
     let img = img.to_rgba8();
     assert_eq!(
@@ -80,29 +77,4 @@ fn load_and_compress(path: PathBuf) -> Result<(Vec<u8>, String)> {
                 .trim_end_matches(".png"),
         ),
     ))
-}
-
-fn main() -> Result<()> {
-    let now = std::time::Instant::now();
-    let mut paths = Vec::new();
-    paths.extend(glob::glob("input/*.png")?);
-
-    let images = paths
-        .into_par_iter()
-        .flatten()
-        .map(load_and_compress)
-        .collect::<Vec<Result<(Vec<u8>, String)>>>()
-        .into_iter()
-        .collect::<Result<Vec<(Vec<u8>, String)>>>()?;
-
-    for (img, name) in images {
-        std::fs::File::create(&*format!("output/{}.tex.gz", name))
-            .unwrap()
-            .write_all(img.as_slice())
-            .unwrap();
-    }
-
-    println!("elapsed: {}ms", now.elapsed().as_millis());
-
-    Ok(())
 }
