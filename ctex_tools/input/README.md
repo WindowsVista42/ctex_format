@@ -1,1 +1,1 @@
-contains input textures
+Input (.png) textures.
