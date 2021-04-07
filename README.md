@@ -1,15 +1,14 @@
-# CTEX 
-### 256 Color Texture Encoding Format (.ctex)
+# CTEX Image Encoding Format
 
-CTEX is a texture encoding format intended for use with 256 colors.
+CTEX (.ctex) is an image encoding format intended for use with 256 color images and games.
 It supports very fast loads and small file sizes.
 
 ## Limitations and Considerations
-Images can only use a palette of 256 colors.
-This palette is naively generated from the base image.
-If the base image contains more than 256 colors the encoding will not work.
+Input images can only contain 256 unique colors.
+This palette is naively generated from the base image,
+and if there are more than 256 unique colors, the encoding will not work.
 
-This texture format will typically reduce file sizes, however it was not created with this sole purpose.
+This format will typically reduce file sizes, however it was not created with this sole purpose.
 LZ4 compression is used to reduce file sizes further, as well as reduce io bottlenecks.
 
 The primary goal of this format is to be easy to implement and quick to decode.
