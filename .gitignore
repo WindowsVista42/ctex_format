@@ -1,10 +1,11 @@
 /target
 
-/input
-/input/*
+ctex_tools/input/*
+ctex_tools/target
+!ctex_tools/input/README.md
 
-/output
-/output/*
+ctex_tools/output/*
+!ctex_tools/output/README.md
 
 /.idea
 
