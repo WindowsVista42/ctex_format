@@ -1,1 +1,1 @@
-Input (.png) textures.
+Input (.png) images.
