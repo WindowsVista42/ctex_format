@@ -1,4 +1,5 @@
-# *CTEX Texture Encoding Format (.ctex)*
+# CTEX 
+### 256 Color Texture Encoding Format (.ctex)
 
 CTEX is a texture encoding format intended for use with 256 colors.
 It supports very fast loads and small file sizes.
