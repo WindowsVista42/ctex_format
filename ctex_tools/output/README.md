@@ -1,1 +1,1 @@
-Output (.ctex) textures.
+Output (.ctex) images.
