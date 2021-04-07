@@ -1,1 +1,1 @@
-contains output textures
+Output (.ctex) textures.
