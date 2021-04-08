@@ -26,7 +26,7 @@ pub fn par_encode_all(glob_str: &str) -> Result<Vec<(Vec<u8>, String)>> {
 }
 
 #[cfg(feature = "par_tools")]
-pub fn par_decode_all_fifo(paths: &Vec<&PathBuf>) -> Result<Vec<Vec<u8>>> {
+pub fn par_decode_all_fifo(paths: &Vec<PathBuf>) -> Result<Vec<Vec<u8>>> {
     rayon::scope_fifo(|s| {
         let (sen, rec) = channel();
         paths
@@ -34,7 +34,7 @@ pub fn par_decode_all_fifo(paths: &Vec<&PathBuf>) -> Result<Vec<Vec<u8>>> {
             //.flatten()
             .map(|p| {
                 let sender = sen.clone();
-                s.spawn_fifo(move |_| sender.send(decode::decode_path(p)).unwrap());
+                s.spawn_fifo(move |_| sender.send(decode::decode_path(&p)).unwrap());
             })
             .map(|_| {
                 rec.recv().unwrap()
