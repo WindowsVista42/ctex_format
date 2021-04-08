@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 ctex = { path = "../ctex_lib", features = ["par_tools"] }
 lz4 = "1.23.2"
+glob = "0.3.0"

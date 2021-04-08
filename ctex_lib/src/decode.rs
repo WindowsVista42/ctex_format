@@ -1,8 +1,8 @@
 use anyhow::*;
 use std::path::PathBuf;
 
-pub fn decode(gz_buf: &Vec<u8>) -> Result<Vec<u8>> {
-    let buf = gz_buf;
+pub fn decode(lz4_buf: &Vec<u8>) -> Result<Vec<u8>> {
+    let buf = lz4_buf;
 
     let width = unsafe {
         buf.get(0..4)
@@ -39,7 +39,7 @@ pub fn decode(gz_buf: &Vec<u8>) -> Result<Vec<u8>> {
     Ok(unsafe { out.align_to::<u8>().1.to_vec() })
 }
 
-pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
+pub fn decode_path(path: &PathBuf) -> Result<Vec<u8>> {
     let file = std::fs::File::open(path)?;
     let mut decoder = lz4::Decoder::new(file)?;
     let mut buf: Vec<u8> = Vec::new();
