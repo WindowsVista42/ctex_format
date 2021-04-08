@@ -40,10 +40,10 @@ pub fn decode(gz_buf: &Vec<u8>) -> Result<Vec<u8>> {
 }
 
 pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
-    let mut decoder = lz4::Decoder::new(path)?;
-    let mut buf = Vec::new();
-    std::io::copy(&mut decoder, &mut buf);
-    //let buf = std::fs::read(path)?.to_vec();
+    let file = std::fs::File::open(path)?;
+    let mut decoder = lz4::Decoder::new(file)?;
+    let mut buf: Vec<u8> = Vec::new();
+    std::io::copy(&mut decoder, &mut buf)?;
 
     let width = unsafe {
         buf.get(0..4)
