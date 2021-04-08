@@ -42,16 +42,15 @@ pub fn decode(gz_buf: &Vec<u8>) -> Result<Vec<u8>> {
 pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
     let buf = std::fs::read(path)?.to_vec();
 
-    let now = std::time::Instant::now();
     let width = unsafe {
         buf.get(0..4)
-            .expect("Incorrect input format")
+            .expect("Incorrect input format width")
             .align_to::<u32>()
             .1[0]
     };
     let num_colors = unsafe {
         buf.get(4..8)
-            .expect("Incorrect input format")
+            .expect("Incorrect input format num_colors")
             .align_to::<u32>()
             .1[0]
     };
@@ -61,13 +60,13 @@ pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
 
     let palette = unsafe {
         buf.get(8..colors_end)
-            .expect("Incorrect input format")
+            .expect("Incorrect input format palette")
             .align_to::<[u8; 4]>()
             .1
     };
     let data = buf
         .get(colors_end..data_end)
-        .expect("Incorrect input format");
+        .expect("Incorrect input format data");
 
     let mut out: Vec<[u8; 4]> = Vec::with_capacity((width * width) as usize);
 
@@ -75,8 +74,6 @@ pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
     for i in 0..(width * width) {
         out.push(palette[data[i as usize] as usize]);
     }
-
-    println!("decode: {} ms", now.elapsed().as_millis());
 
     Ok(unsafe { out.align_to::<u8>().1.to_vec() })
 }
