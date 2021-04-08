@@ -7,6 +7,7 @@ pub mod encode;
 use anyhow::*;
 use std::path;
 use std::sync::mpsc::channel;
+use std::path::PathBuf;
 
 #[cfg(feature = "par_tools")]
 pub fn par_encode_all(glob_str: &str) -> Result<Vec<(Vec<u8>, String)>> {
@@ -25,12 +26,12 @@ pub fn par_encode_all(glob_str: &str) -> Result<Vec<(Vec<u8>, String)>> {
 }
 
 #[cfg(feature = "par_tools")]
-pub fn par_decode_all_fifo(paths: &Vec<glob::GlobResult>) -> Result<Vec<Vec<u8>>> {
+pub fn par_decode_all_fifo(paths: &Vec<&PathBuf>) -> Result<Vec<Vec<u8>>> {
     rayon::scope_fifo(|s| {
         let (sen, rec) = channel();
         paths
             .iter()
-            .flatten()
+            //.flatten()
             .map(|p| {
                 let sender = sen.clone();
                 s.spawn_fifo(move |_| sender.send(decode::decode_path(p)).unwrap());
