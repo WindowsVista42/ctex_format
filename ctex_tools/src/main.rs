@@ -1,9 +1,10 @@
 #![feature(seek_stream_len)]
 
-use ctex::{par_encode_all, par_decode_all_fifo};
+use ctex::{par_decode_all_fifo, par_encode_all};
 use std::io::{Seek, Write};
 
 use glob::glob;
+use std::path::PathBuf;
 
 fn main() {
     let mut encodes = par_encode_all("input/*.png").unwrap();
@@ -12,7 +13,9 @@ fn main() {
     paths.extend(glob("output/*.ctex").unwrap());
     println!("{:?}", paths);
     println!();
-    let decodes = par_decode_all_fifo(&paths).unwrap();
+    let paths = paths.iter().flatten().collect::<Vec<&PathBuf>>();
+    let decodes = par_decode_all_fifo(&paths)
+        .unwrap();
     decodes.iter().for_each(|img| {
         println!("{}", img.len());
     });
