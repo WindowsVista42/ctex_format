@@ -44,13 +44,13 @@ pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
 
     let width = unsafe {
         buf.get(0..4)
-            .expect("Incorrect input format width")
+            .expect("Incorrect input format")
             .align_to::<u32>()
             .1[0]
     };
     let num_colors = unsafe {
         buf.get(4..8)
-            .expect("Incorrect input format num_colors")
+            .expect("Incorrect input format")
             .align_to::<u32>()
             .1[0]
     };
@@ -60,13 +60,13 @@ pub fn decode_path(path: PathBuf) -> Result<Vec<u8>> {
 
     let palette = unsafe {
         buf.get(8..colors_end)
-            .expect("Incorrect input format palette")
+            .expect("Incorrect input format")
             .align_to::<[u8; 4]>()
             .1
     };
     let data = buf
         .get(colors_end..data_end)
-        .expect("Incorrect input format data");
+        .expect("Incorrect input format");
 
     let mut out: Vec<[u8; 4]> = Vec::with_capacity((width * width) as usize);
 
