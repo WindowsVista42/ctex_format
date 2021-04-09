@@ -1,9 +1,7 @@
 #![feature(seek_stream_len)]
 
-use std::io::{Seek, Write};
+use std::io::{Write};
 
-use glob::glob;
-use std::path::PathBuf;
 use ctex::par_tools::par_encode_all;
 
 fn main() {
@@ -13,5 +11,6 @@ fn main() {
         let file = std::fs::File::create(&*format!("output/{}.ctex", name)).unwrap();
         let mut encoder = lz4::EncoderBuilder::new().level(9).build(file).unwrap();
         encoder.write_all(img.as_slice()).unwrap();
+        encoder.finish().1.unwrap();
     });
 }
