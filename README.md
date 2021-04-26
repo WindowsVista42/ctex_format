@@ -2,7 +2,7 @@
 
 CTEX (.ctex) is an image encoding format intended for use with 256 color images.  
 It supports very fast loads and small file sizes.  
-This is still being developed.
+This is being developed for a custom game engine, but I decided that the technology here might be useful to someone else.
 
 ## Limitations and Considerations
 Input images can only contain 256 unique colors.
