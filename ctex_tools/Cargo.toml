@@ -6,5 +6,4 @@ edition = "2018"
 
 [dependencies]
 ctex = { path = "../ctex_lib" }
-lz4 = "1.23.2"
 glob = "0.3.0"

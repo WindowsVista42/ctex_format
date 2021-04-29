@@ -11,7 +11,7 @@ pub mod util;
 
 mod tests;
 
-pub const SECTOR_SIZE: usize = 0x40;
+pub(crate) const SECTOR_SIZE: usize = 0x40;
 
 pub struct CtexImage {
     flags: Flags,
