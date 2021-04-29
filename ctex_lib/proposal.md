@@ -37,9 +37,9 @@ CTEX 0.2+ packs adjacent elements into the nth byte of each dword sequence
 ```
 
 What this allows us to do is load each sector into a 64 byte vector,
-do some bit manipulation and shifting,
+do some bit manipulation and shifting, and arrive at
 ```
-and arrive at 00 through 15 in the 00th through 15th dwords
+00 through 15 in the 00th through 15th dwords
 ...
 ```
 
