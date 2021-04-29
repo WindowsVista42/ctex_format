@@ -6,8 +6,8 @@ While future technologies might prove to be better,
 designing around likely, yet still theoretical, future hardware
 would be even more overkill than this current approach is.
 
-The following section gives a brief overview of the *simd friendly* lawet of CTEX 0.2+.  
-The section after gives a visual overview of the lawet.
+The following section gives a brief overview of the *simd friendly* layout of CTEX 0.2+.  
+The section after gives a visual overview of the layout.
 
 ## OUTLINE
 
@@ -37,9 +37,10 @@ CTEX 0.2+ packs adjacent elements into the nth byte of each dword sequence
 ```
 
 What this allows us to do is load each sector into a 64 byte vector,
-do some bit manipulation and shifting,
+do some bit manipulation and shifting, and arrive at
 ```
-and arrive at 00 through 15 in the 00th through 15th dwords
+00 through 15 in the first 16 dwords.
+16 through 31 in the next 16 dwords.
 ...
 ```
 
@@ -50,6 +51,8 @@ to get the colors of each pixel.
 
 We now write out the data generated to memory, and process the next sector.  
 Once all of the sectors have been processed, we have a decoded image in memory.  
+
+Modifying this to approach to also work with avx2 and sse2 is relatively trivial.  
 
 ### ENCODING
 Encoding an image works the same way.  
@@ -66,7 +69,7 @@ CTEX 0.2+ has moved to a flags system.
 The first 8 bytes are dedicated to flags.  
 
 ```
-Packed 64 bit Flags Lawet
+Packed 64 bit Flags Layout
 
 00  vers_0 // CTEX Version
 01  comp_0 // Compression
@@ -80,6 +83,8 @@ Packed 64 bit Flags Lawet
 
 
 ## LAYOUTS
+
+Visual representations of the CTEX 0.2+ data layout throughout each processing step.
 
 ```
 Packed 512 bit Sector Layout
