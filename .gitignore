@@ -1,5 +1,7 @@
 /target
 
+ctex_lib/target
+
 ctex_tools/input/*
 ctex_tools/target
 !ctex_tools/input/README.md
