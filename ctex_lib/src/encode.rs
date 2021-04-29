@@ -1,72 +1,79 @@
-use anyhow::*;
-use image::Rgba;
-use std::path::PathBuf;
+use crate::flag::Flags;
+use crate::{CtexImage, SECTOR_SIZE};
+use image::GenericImageView;
+use num_integer::Roots;
 
-fn search(data: &[[u8; 4]], val: &[u8; 4]) -> Option<usize> {
-    let val = unsafe { val.align_to::<u32>().1[0] };
-    for (i, x) in data.iter().enumerate() {
-        let x = unsafe { x.align_to::<u32>().1[0] };
-        if x == val {
+fn search(color: u32, lut: &[u32]) -> Option<usize> {
+    for (i, x) in lut.iter().enumerate() {
+        if *x == color {
             return Some(i);
         }
     }
     return None;
 }
 
-pub fn encode(path: PathBuf) -> Result<(Vec<u8>, String)> {
-    let img = image::open(path.clone()).unwrap();
-    let img = img.to_rgba8();
-    assert_eq!(
-        img.width(),
-        img.height(),
-        "Image height and width not equal"
-    );
-    assert_eq!(
-        img.width() % 64,
-        0,
-        "Image dimensions must be a multiple of 64"
+fn add(color: u32, lut: &mut Vec<u32>, offsets: &mut Vec<u8>) {
+    if let Some(idx) = search(color, &*lut) {
+        offsets.push(idx as u8)
+    } else {
+        lut.push(color);
+        offsets.push(lut.len() as u8 - 1);
+    }
+}
+
+fn encode(img: &[u32], flags: &mut Flags) -> (Vec<u32>, Vec<u8>, Flags) {
+    let w = img.len();
+    assert!(
+        w.is_power_of_two(),
+        "Input image must be square and a power of two!"
     );
 
-    // image data
-    let width = img.width();
-    let mut colors: Vec<[u8; 4]> = Vec::new();
-    let mut data: Vec<u8> = Vec::new();
+    let mut lut = Vec::new();
+    let mut offsets = Vec::with_capacity(w);
 
-    // Build colors data
-    let pixels = img.pixels().map(|p| *p).collect::<Vec<Rgba<u8>>>();
-    for px in pixels.iter() {
-        if let Some(idx) = search(&colors.as_slice(), &px.0) {
-            // found
-            data.push(idx as u8);
-        } else {
-            // not found add to list
-            colors.push(px.0);
-            data.push((colors.len() - 1) as u8);
+    for i in 0..(w / SECTOR_SIZE) {
+        for n in 0..(SECTOR_SIZE / 4) {
+            let px_0 = img[SECTOR_SIZE * i + n + 00];
+            let px_1 = img[SECTOR_SIZE * i + n + 16];
+            let px_2 = img[SECTOR_SIZE * i + n + 32];
+            let px_3 = img[SECTOR_SIZE * i + n + 48];
+
+            add(px_0, &mut lut, &mut offsets);
+            add(px_1, &mut lut, &mut offsets);
+            add(px_2, &mut lut, &mut offsets);
+            add(px_3, &mut lut, &mut offsets);
         }
     }
     assert!(
-        colors.len() < 256,
-        "Image cannot contain more than 256 colors"
+        lut.len() <= 256,
+        "Input image must have 256 or fewer unique colors!",
     );
-    println!("{:?}: {}", path.clone(), colors.len());
 
-    let mut bytes = Vec::new();
-    {
-        bytes.extend(width.as_ne_bytes());
-        bytes.extend((colors.len() as u32).as_ne_bytes());
-        bytes.extend(unsafe { colors.align_to::<u8>().1 });
-        bytes.extend(data.as_slice());
+    flags.lutw_0 = lut.len() as u8;
+    flags.offw_0 = w.sqrt() as u16;
+
+    (lut, offsets, *flags)
+}
+
+pub fn encode_raw(img: &[u32], mut flags: Flags) -> (Vec<u32>, Vec<u8>, Flags) {
+    encode(img, &mut flags)
+}
+
+pub fn encode_path(path: &str, mut flags: Flags) -> CtexImage {
+    let img = image::open(path).unwrap();
+    assert_eq!(img.width(), img.height(), "Input image must be square!");
+
+    let img = img
+        .to_rgba8()
+        .pixels()
+        .map(|p| unsafe { p.0.align_to::<u32>().1[0] })
+        .collect::<Vec<u32>>();
+
+    let (lut, offsets, flags) = encode(&*img, &mut flags);
+
+    CtexImage {
+        flags,
+        lut,
+        offsets,
     }
-    //let bytes = encoder.finish().unwrap();
-
-    Ok((
-        bytes,
-        String::from(
-            path.file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .trim_end_matches(".png"),
-        ),
-    ))
 }
