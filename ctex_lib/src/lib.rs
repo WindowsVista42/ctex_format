@@ -5,9 +5,18 @@
 use crate::flags::Flags;
 
 pub mod decode;
+
+#[cfg(feature = "encode")]
 pub mod encode;
+
+#[cfg(feature = "encode")]
 pub mod flags;
+
+#[cfg(feature = "encode")]
 pub mod util;
+
+#[cfg(feature = "par_util")]
+pub mod par_util;
 
 mod tests;
 
