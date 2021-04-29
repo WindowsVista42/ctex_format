@@ -84,6 +84,8 @@ Packed 64 bit Flags Layout
 
 ## LAYOUTS
 
+Visual representations of the CTEX 0.2+ data layout throughout each processing step.
+
 ```
 Packed 512 bit Sector Layout
 sect_0 (u8x64)
