@@ -74,7 +74,7 @@ mod tests {
 
     #[test]
     fn test_runtime_detection_decode() {
-        let out = decode_raw(&INPUT_LUT, &INPUT_CTEX, Flags::default_no_compression());
+        let out = decode_raw(&INPUT_LUT, &INPUT_CTEX);
 
         assert_eq!(out.len(), INPUT_CTEX.len());
         assert_eq!(out.as_slice(), &OUTPUT_CTEX);
@@ -92,8 +92,8 @@ mod tests {
 
     #[test]
     fn test_round_trip() {
-        let (lut, offsets, _) = encode_raw(&OUTPUT_CTEX, Flags::default());
-        let out = decode_raw(&*lut, &*offsets, Flags::default_no_compression());
+        let (lut, offsets, _) = encode_raw(&OUTPUT_CTEX, Flags::default_no_compression());
+        let out = decode_raw(&*lut, &*offsets);
 
         assert_eq!(out.len(), OUTPUT_CTEX.len());
         assert_eq!(out, &OUTPUT_CTEX);
@@ -101,12 +101,12 @@ mod tests {
 
     #[test]
     fn test_encode_path() {
-
-        write_ctex("test/test.png", "test/test.ctex", Flags::default_no_compression()).unwrap();
+        write_ctex("test/test.png", "test/test.ctex", Flags::default()).unwrap();
 
         let img = decode_path("test/test.ctex").unwrap();
 
-        let png = image::open("test/test.png").unwrap()
+        let png = image::open("test/test.png")
+            .unwrap()
             .to_rgba8()
             .pixels()
             .map(|p| unsafe { p.0.align_to::<u32>().1[0] })
