@@ -1,7 +1,8 @@
-use crate::flag::{Compression, Flags, Version};
+use crate::flags::{Flags};
 use crate::SECTOR_SIZE;
 use std::arch::x86_64::*;
 use std::io::Read;
+use anyhow::Result;
 
 #[allow(dead_code)]
 union Avx512fBucket {
@@ -20,22 +21,22 @@ union Sse2Bucket {
     snacks: [i32; 4],
 }
 
-pub fn decode_path(path: &str) -> Vec<u32> {
-    let mut file = std::fs::File::open(path).unwrap();
+pub fn decode_path(path: &str) -> Result<Vec<u32>> {
+    let mut file = std::fs::File::open(path)?;
     let mut buff = Vec::new();
-    file.read_to_end(&mut buff);
+    file.read_to_end(&mut buff)?;
 
     let flags: Flags = unsafe { buff.get(0..8).unwrap().align_to::<u64>().1[0].into() };
     let lut_off = 8 + flags.lut_len() * 4;
 
     let lut = unsafe { buff.get(8..lut_off).unwrap().align_to::<u32>().1 };
-    let offsets = unsafe { buff.get(lut_off..).unwrap() };
+    let offsets = buff.get(lut_off..).unwrap();
 
     let data = decode_raw(lut, offsets, flags);
-    data
+    Ok(data)
 }
 
-pub fn decode_raw(lut: &[u32], offsets: &[u8], flags: Flags) -> Vec<u32> {
+pub fn decode_raw(lut: &[u32], offsets: &[u8], _flags: Flags) -> Vec<u32> {
     if is_x86_feature_detected!("avx512f") {
         return avx512f_decode(lut, offsets);
     } else if is_x86_feature_detected!("avx2") {

@@ -1,15 +1,16 @@
 #![feature(num_as_ne_bytes)]
 #![feature(stdsimd)]
 
-use crate::flag::Flags;
+use crate::flags::Flags;
 
 pub mod decode;
 pub mod encode;
+pub mod util;
+pub mod flags;
 
-mod flag;
 mod tests;
 
-const SECTOR_SIZE: usize = 64;
+pub const SECTOR_SIZE: usize = 64;
 
 pub struct CtexImage {
     flags: Flags,

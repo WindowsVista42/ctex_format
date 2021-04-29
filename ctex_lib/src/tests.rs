@@ -1,10 +1,9 @@
 #[cfg(test)]
 mod tests {
     use crate::decode::{avx2_decode, decode_path, decode_raw, sse2_decode};
-    use crate::encode::{encode_path, encode_raw};
-    use crate::flag::Flags;
-    use crate::{flag, CtexImage};
-    use std::io::Write;
+    use crate::encode::{encode_raw};
+    use crate::flags::Flags;
+    use crate::util::write_ctex;
 
     const INPUT_LUT: [u32; 3] = [5, 4, 6];
     const INPUT_CTEX: [u8; 128] = [
@@ -93,7 +92,7 @@ mod tests {
 
     #[test]
     fn test_round_trip() {
-        let (lut, offsets, flags) = encode_raw(&OUTPUT_CTEX, Flags::default());
+        let (lut, offsets, _) = encode_raw(&OUTPUT_CTEX, Flags::default());
         let out = decode_raw(&*lut, &*offsets, Flags::default_no_compression());
 
         assert_eq!(out.len(), OUTPUT_CTEX.len());
@@ -102,20 +101,10 @@ mod tests {
 
     #[test]
     fn test_encode_path() {
-        let CtexImage {
-            flags,
-            lut,
-            offsets,
-        } = encode_path("test/test.png", Flags::default_no_compression());
 
-        let mut file = std::fs::File::create("test/test.ctex").unwrap();
-        unsafe {
-            file.write_all(flags.as_u64().as_ne_bytes());
-            file.write_all(lut.as_slice().align_to::<u8>().1);
-            file.write_all(offsets.as_slice());
-        }
+        write_ctex("test/test.png", "test/test.ctex", Flags::default_no_compression()).unwrap();
 
-        let img = decode_path("test/test.ctex");
+        let img = decode_path("test/test.ctex").unwrap();
 
         let png = image::open("test/test.png").unwrap()
             .to_rgba8()

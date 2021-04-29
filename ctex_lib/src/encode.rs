@@ -1,4 +1,4 @@
-use crate::flag::Flags;
+use crate::flags::Flags;
 use crate::{CtexImage, SECTOR_SIZE};
 use image::GenericImageView;
 use num_integer::Roots;
