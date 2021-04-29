@@ -52,6 +52,8 @@ to get the colors of each pixel.
 We now write out the data generated to memory, and process the next sector.  
 Once all of the sectors have been processed, we have a decoded image in memory.  
 
+Modifying this to approach to also work with avx2 and sse2 is relatively trivial.  
+
 ### ENCODING
 Encoding an image works the same way.  
 We chunk it into sectors of 64 bytes, and order the bytes such that  
