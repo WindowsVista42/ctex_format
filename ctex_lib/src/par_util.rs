@@ -1,6 +1,6 @@
-use glob::glob;
-use crate::util::write_ctex;
 use crate::flags::Flags;
+use crate::util::write_ctex;
+use glob::glob;
 use rayon::prelude::*;
 
 pub fn par_write_ctex(input_glob: &str, output_dir: &str) {
@@ -18,11 +18,10 @@ pub fn par_write_ctex(input_glob: &str, output_dir: &str) {
         let mut input_path = String::from("input/");
         let mut output_path = String::from(output_dir);
         match output_path.chars().last() {
-            Some('/') => {},
-            None => {},
+            Some('/') => {}
+            None => {}
             _ => output_path.push('/'),
         }
-
 
         input_path.push_str(input_name.unwrap().to_str().unwrap());
         output_path.push_str(output_name.to_str().unwrap());
