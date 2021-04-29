@@ -69,13 +69,13 @@ The first 8 bytes are dedicated to flags.
 Packed 64 bit Flags Lawet
 
 00  vers_0 // CTEX Version
-01  comp_1 // Compression
-02  resv_0 // Reserved
-03  resv_1 // Reserved
-04  resv_2 // Reserved
-05  lutw_0 // Lut Width
-06  offw_0 // Offsets Width
-07  offw_0 // Offsets Width
+01  comp_0 // Compression
+02  lutw_0 // Lut Width
+03  offw_0 // Offsets Width
+04  offw_0 // Offsets Width
+05  resv_0 // Reserved
+06  resv_1 // Reserved
+07  resv_2 // Reserved
 ```
 
 
