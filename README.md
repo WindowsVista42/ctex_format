@@ -16,4 +16,4 @@ The primary goal of this format is to be easy to implement and quick to decode.
 Encoding times will naturally be longer, but not slow by any means.
 
 ## Specification
-[proposal](https://github.com/WindowsVista42/ctex_image/blob/main/ctex_lib/proposal.md)
+[proposal](ctex_lib/proposal.md)
