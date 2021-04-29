@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::decode::{avx2_decode, decode_path, decode_raw, sse2_decode};
-    use crate::encode::{encode_raw};
+    use crate::encode::encode_raw;
     use crate::flags::Flags;
     use crate::util::write_ctex;
 

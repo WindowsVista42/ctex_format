@@ -1,6 +1,6 @@
-use crate::CtexImage;
 use crate::encode::encode_path;
 use crate::flags::Flags;
+use crate::CtexImage;
 use std::io::Write;
 
 use anyhow::Result;

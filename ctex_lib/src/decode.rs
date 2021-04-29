@@ -1,8 +1,8 @@
-use crate::flags::{Flags};
+use crate::flags::{Compression, Flags};
 use crate::SECTOR_SIZE;
+use anyhow::Result;
 use std::arch::x86_64::*;
 use std::io::Read;
-use anyhow::Result;
 
 #[allow(dead_code)]
 union Avx512fBucket {

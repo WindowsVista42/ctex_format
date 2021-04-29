@@ -6,12 +6,12 @@ use crate::flags::Flags;
 
 pub mod decode;
 pub mod encode;
-pub mod util;
 pub mod flags;
+pub mod util;
 
 mod tests;
 
-pub const SECTOR_SIZE: usize = 64;
+pub const SECTOR_SIZE: usize = 0x40;
 
 pub struct CtexImage {
     flags: Flags,

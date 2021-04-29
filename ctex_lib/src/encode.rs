@@ -1,7 +1,8 @@
-use crate::flags::Flags;
+use crate::flags::{Compression, Flags};
 use crate::{CtexImage, SECTOR_SIZE};
 use image::GenericImageView;
 use num_integer::Roots;
+use std::io::Write;
 
 fn search(color: u32, lut: &[u32]) -> Option<usize> {
     for (i, x) in lut.iter().enumerate() {
@@ -9,7 +10,7 @@ fn search(color: u32, lut: &[u32]) -> Option<usize> {
             return Some(i);
         }
     }
-    return None;
+    None
 }
 
 fn add(color: u32, lut: &mut Vec<u32>, offsets: &mut Vec<u8>) {
