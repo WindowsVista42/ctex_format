@@ -1,5 +1,6 @@
 #![feature(num_as_ne_bytes)]
 #![feature(stdsimd)]
+#![allow(clippy::identity_op)]
 
 use crate::flags::Flags;
 
