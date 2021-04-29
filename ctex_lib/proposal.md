@@ -6,8 +6,8 @@ While future technologies might prove to be better,
 designing around likely, yet still theoretical, future hardware
 would be even more overkill than this current approach is.
 
-The following section gives a brief overview of the *simd friendly* lawet of CTEX 0.2+.  
-The section after gives a visual overview of the lawet.
+The following section gives a brief overview of the *simd friendly* layout of CTEX 0.2+.  
+The section after gives a visual overview of the layout.
 
 ## OUTLINE
 
@@ -66,7 +66,7 @@ CTEX 0.2+ has moved to a flags system.
 The first 8 bytes are dedicated to flags.  
 
 ```
-Packed 64 bit Flags Lawet
+Packed 64 bit Flags Layout
 
 00  vers_0 // CTEX Version
 01  comp_0 // Compression
