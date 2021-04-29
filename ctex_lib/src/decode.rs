@@ -32,17 +32,29 @@ pub fn decode_path(path: &str) -> Result<Vec<u32>> {
     let lut = unsafe { buff.get(8..lut_off).unwrap().align_to::<u32>().1 };
     let offsets = buff.get(lut_off..).unwrap();
 
-    let data = decode_raw(lut, offsets, flags);
+    let mut data = Vec::new();
+
+    match flags.compression() {
+        Compression::None => data = offsets.to_vec(),
+        Compression::Lz4 => {
+            let file = std::io::Cursor::new(offsets);
+            let mut decoder = lz4::Decoder::new(file).expect("Decode Failure!");
+            decoder.read_to_end(&mut data).expect("Decode Failure!");
+            decoder.finish().1.expect("Decode Failure!");
+        }
+    }
+
+    let data = decode_raw(lut, &*data);
     Ok(data)
 }
 
-pub fn decode_raw(lut: &[u32], offsets: &[u8], _flags: Flags) -> Vec<u32> {
+pub fn decode_raw(lut: &[u32], offsets: &[u8]) -> Vec<u32> {
     if is_x86_feature_detected!("avx512f") {
-        return avx512f_decode(lut, offsets);
+        avx512f_decode(lut, offsets)
     } else if is_x86_feature_detected!("avx2") {
-        return avx2_decode(lut, offsets);
+        avx2_decode(lut, offsets)
     } else if is_x86_feature_detected!("sse2") {
-        return sse2_decode(lut, offsets);
+        sse2_decode(lut, offsets)
     } else {
         todo!()
         // Todo: return default_decode(lut, offsets);
@@ -58,6 +70,31 @@ unsafe fn _mm_gather_epi32(ptr: *const i32, reg: __m128i, size: i32) -> __m128i 
         *((ptr as isize + (buck.snacks[1] * size) as isize) as *const i32),
         *((ptr as isize + (buck.snacks[0] * size) as isize) as *const i32),
     )
+}
+
+#[allow(dead_code)]
+pub(crate) fn default_decode(lut: &[u32], offsets: &[u8]) -> Vec<u32> {
+    let w = offsets.len();
+    assert!(
+        w >= SECTOR_SIZE,
+        "Input CTEX data must have a width greater than {}!",
+        SECTOR_SIZE - 1
+    );
+    assert_eq!(
+        w % SECTOR_SIZE,
+        0,
+        "Input CTEX data must have a width divisible by {}!",
+        SECTOR_SIZE
+    );
+    assert_ne!(lut.len(), 0, "Input lut must not have a length of zero!");
+
+    let mut out = Vec::with_capacity(4 * w);
+
+    unsafe {
+        out.set_len(w);
+    }
+
+    out
 }
 
 #[rustfmt::skip]

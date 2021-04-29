@@ -53,6 +53,23 @@ fn encode(img: &[u32], flags: &mut Flags) -> (Vec<u32>, Vec<u8>, Flags) {
     flags.lutw_0 = lut.len() as u8;
     flags.offw_0 = w.sqrt() as u16;
 
+    match flags.compression() {
+        Compression::None => {}
+        Compression::Lz4 => {
+            let file = std::io::Cursor::new(Vec::new());
+            let mut encoder = lz4::EncoderBuilder::new()
+                .level(9)
+                .build(file)
+                .expect("Encoding failure!");
+            encoder
+                .write_all(offsets.as_slice())
+                .expect("Encoding failure!");
+            let (outp, res) = encoder.finish();
+            res.expect("Encoding failure!");
+            offsets = outp.into_inner();
+        }
+    }
+
     (lut, offsets, *flags)
 }
 
