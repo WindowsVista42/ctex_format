@@ -2,26 +2,23 @@
 #![feature(stdsimd)]
 #![allow(clippy::identity_op)]
 
-use crate::flags::Flags;
-
-pub mod decode;
-pub mod flags;
-
-#[cfg(feature = "encode")]
-pub mod encode;
-
-#[cfg(feature = "encode")]
+mod flags;
+mod decoding;
+mod encoding;
 pub mod util;
 
-#[cfg(feature = "par_util")]
-pub mod par_util;
+pub use crate::flags::*;
+pub use crate::decoding::*;
+pub use crate::encoding::*;
+
+//mod par_util;
 
 mod tests;
 
 pub(crate) const SECTOR_SIZE: usize = 0x40;
 
 #[allow(dead_code)]
-pub struct CtexImage {
+pub struct Image {
     flags: Flags,
     lut: Vec<u32>,
     offsets: Vec<u8>,

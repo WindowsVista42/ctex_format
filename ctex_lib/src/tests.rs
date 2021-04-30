@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
-    use crate::decode::{avx2_decode, decode_path, decode_raw, sse2_decode};
-    use crate::encode::encode_raw;
+    use crate::decoding::{avx2_decode, decode_raw, sse2_decode};
     use crate::flags::Flags;
-    use crate::util::write_ctex;
+    use crate::util::{write_ctex, decode_path};
+    use crate::__encode;
 
     const INPUT_LUT: [u32; 3] = [5, 4, 6];
     const INPUT_CTEX: [u8; 128] = [
@@ -82,7 +82,7 @@ mod tests {
 
     #[test]
     fn test_encode() {
-        let out = encode_raw(&OUTPUT_CTEX, Flags::default_no_compression());
+        let out = __encode(&OUTPUT_CTEX, &mut Flags::default_no_compression());
 
         assert_eq!(out.0.len(), INPUT_LUT.len());
         assert_eq!(out.1.len(), INPUT_CTEX.len());
@@ -92,7 +92,7 @@ mod tests {
 
     #[test]
     fn test_round_trip() {
-        let (lut, offsets, _) = encode_raw(&OUTPUT_CTEX, Flags::default_no_compression());
+        let (lut, offsets, _) = __encode(&OUTPUT_CTEX, &mut Flags::default_no_compression());
         let out = decode_raw(&*lut, &*offsets);
 
         assert_eq!(out.len(), OUTPUT_CTEX.len());
@@ -112,6 +112,8 @@ mod tests {
             .map(|p| unsafe { p.0.align_to::<u32>().1[0] })
             .collect::<Vec<u32>>();
 
-        assert_eq!(img, png);
+        unsafe {
+            assert_eq!(&*img, png.align_to::<u8>().1);
+        }
     }
 }

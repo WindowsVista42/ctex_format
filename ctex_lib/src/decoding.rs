@@ -2,7 +2,6 @@ use crate::flags::{Compression, Flags};
 use crate::SECTOR_SIZE;
 use anyhow::Result;
 use std::arch::x86_64::*;
-use std::io::Read;
 use lz4_flex::decompress;
 
 #[allow(dead_code)]
@@ -22,11 +21,7 @@ union Sse2Bucket {
     snacks: [i32; 4],
 }
 
-pub fn decode_path(path: &str) -> Result<Vec<u32>> {
-    let mut file = std::fs::File::open(path)?;
-    let mut buff = Vec::new();
-    file.read_to_end(&mut buff)?;
-
+pub fn decode(buff: &[u8]) -> Result<Vec<u8>> {
     let flags: Flags = unsafe { buff.get(0..8).unwrap().align_to::<u64>().1[0].into() };
     let lut_off = 8 + flags.lut_len() * 4;
 
@@ -39,10 +34,14 @@ pub fn decode_path(path: &str) -> Result<Vec<u32>> {
     };
 
     let data = decode_raw(lut, &*data);
-    Ok(data)
+    unsafe {
+        let mut data = std::mem::transmute::<Vec<u32>, Vec<u8>>(data);
+        data.set_len(data.len() * 4);
+        Ok(data)
+    }
 }
 
-pub fn decode_raw(lut: &[u32], offsets: &[u8]) -> Vec<u32> {
+pub(crate) fn decode_raw(lut: &[u32], offsets: &[u8]) -> Vec<u32> {
     if is_x86_feature_detected!("avx512f") {
         avx512f_decode(lut, offsets)
     } else if is_x86_feature_detected!("avx2") {

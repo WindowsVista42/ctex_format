@@ -44,7 +44,7 @@ impl Flags {
         }
     }
 
-    pub fn as_u64(&self) -> u64 {
+    pub(crate) fn as_u64(&self) -> u64 {
         unsafe { std::mem::transmute::<Self, u64>(*self) }
     }
 
