@@ -3,6 +3,7 @@ use crate::SECTOR_SIZE;
 use anyhow::Result;
 use std::arch::x86_64::*;
 use std::io::Read;
+use lz4_flex::decompress;
 
 #[allow(dead_code)]
 union Avx512fBucket {
@@ -32,17 +33,10 @@ pub fn decode_path(path: &str) -> Result<Vec<u32>> {
     let lut = unsafe { buff.get(8..lut_off).unwrap().align_to::<u32>().1 };
     let offsets = buff.get(lut_off..).unwrap();
 
-    let mut data = Vec::new();
-
-    match flags.compression() {
-        Compression::None => data = offsets.to_vec(),
-        Compression::Lz4 => {
-            let file = std::io::Cursor::new(offsets);
-            let mut decoder = lz4::Decoder::new(file).expect("Decode Failure!");
-            decoder.read_to_end(&mut data).expect("Decode Failure!");
-            decoder.finish().1.expect("Decode Failure!");
-        }
-    }
+    let data = match flags.compression() {
+        Compression::None => offsets.to_vec(),
+        Compression::Lz4 => decompress(offsets, flags.offsets_len()).unwrap(),
+    };
 
     let data = decode_raw(lut, &*data);
     Ok(data)

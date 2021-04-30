@@ -9,7 +9,7 @@ par_util = ["rayon", "glob"]
 encode = ["image", "num-integer"]
 
 [dependencies]
-lz4 = "1.23.2"
+lz4_flex = "0.7.5"
 anyhow = "1.0.40"
 image = { version = "0.23.14", optional = true }
 num-integer = { version = "0.1.44", optional = true }

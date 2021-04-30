@@ -2,7 +2,7 @@ use crate::flags::{Compression, Flags};
 use crate::{CtexImage, SECTOR_SIZE};
 use image::GenericImageView;
 use num_integer::Roots;
-use std::io::Write;
+use lz4_flex::compress;
 
 fn search(color: u32, lut: &[u32]) -> Option<usize> {
     for (i, x) in lut.iter().enumerate() {
@@ -54,20 +54,8 @@ fn encode(img: &[u32], flags: &mut Flags) -> (Vec<u32>, Vec<u8>, Flags) {
     flags.offw_0 = w.sqrt() as u16;
 
     match flags.compression() {
-        Compression::None => {}
-        Compression::Lz4 => {
-            let file = std::io::Cursor::new(Vec::new());
-            let mut encoder = lz4::EncoderBuilder::new()
-                .level(9)
-                .build(file)
-                .expect("Encoding failure!");
-            encoder
-                .write_all(offsets.as_slice())
-                .expect("Encoding failure!");
-            let (outp, res) = encoder.finish();
-            res.expect("Encoding failure!");
-            offsets = outp.into_inner();
-        }
+        Compression::None => {},
+        Compression::Lz4 => offsets = compress(&*offsets),
     }
 
     (lut, offsets, *flags)

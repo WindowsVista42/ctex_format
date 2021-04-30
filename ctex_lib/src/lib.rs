@@ -5,12 +5,10 @@
 use crate::flags::Flags;
 
 pub mod decode;
+pub mod flags;
 
 #[cfg(feature = "encode")]
 pub mod encode;
-
-#[cfg(feature = "encode")]
-pub mod flags;
 
 #[cfg(feature = "encode")]
 pub mod util;
@@ -22,6 +20,7 @@ mod tests;
 
 pub(crate) const SECTOR_SIZE: usize = 0x40;
 
+#[allow(dead_code)]
 pub struct CtexImage {
     flags: Flags,
     lut: Vec<u32>,
