@@ -14,6 +14,7 @@ pub use crate::encoding::*;
 //mod par_util;
 
 mod tests;
+pub mod par_util;
 
 pub(crate) const SECTOR_SIZE: usize = 0x40;
 
