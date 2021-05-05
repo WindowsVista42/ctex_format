@@ -4,8 +4,11 @@ use std::io::{Write, Read};
 
 use anyhow::Result;
 use lz4_flex::decompress;
+
+#[cfg(feature = "encode_util")]
 use image::GenericImageView;
 
+#[cfg(feature = "encode_util")]
 pub fn write_ctex(input_path: &str, output_path: &str, flags: Flags) -> Result<()> {
     let Image {
         flags,
@@ -47,6 +50,7 @@ pub fn decode_path(path: &str) -> Result<Vec<u8>> {
     }
 }
 
+#[cfg(feature = "encode_util")]
 pub(crate) fn __encode_path(path: &str, mut flags: Flags) -> Image {
     let img = image::open(path).unwrap();
     assert_eq!(img.width(), img.height(), "Input image must be square!");
@@ -66,6 +70,7 @@ pub(crate) fn __encode_path(path: &str, mut flags: Flags) -> Image {
     }
 }
 
+#[cfg(feature = "encode_util")]
 pub fn encode_path(path: &str, flags: Flags) -> Result<Vec<u8>> {
     let img = image::open(path).unwrap();
     assert_eq!(img.width(), img.height(), "Input image must be square!");

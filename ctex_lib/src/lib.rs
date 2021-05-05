@@ -14,12 +14,14 @@ pub use crate::encoding::*;
 //mod par_util;
 
 mod tests;
+
+#[cfg(feature = "rayon")]
 pub mod par_util;
 
 pub(crate) const SECTOR_SIZE: usize = 0x40;
 
 #[allow(dead_code)]
-pub struct Image {
+pub(crate) struct Image {
     flags: Flags,
     lut: Vec<u32>,
     offsets: Vec<u8>,

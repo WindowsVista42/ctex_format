@@ -5,4 +5,4 @@ authors = ["Sean Moulton <bananamoulton@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-ctex = { path = "../ctex_lib" }
+ctex = { path = "../ctex_lib", features = ["par_util"] }
