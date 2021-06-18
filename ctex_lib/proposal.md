@@ -3,8 +3,8 @@
 This data representation is built around SIMD and easily supports up to avx512.  
 At the time of this being created, it is the latest and greatest.  
 
-The following section gives a brief overview of the *simd friendly* layout of CTEX 0.2+.  
-The section after gives a visual overview of the layout.
+The following section gives a brief overview of the *simd friendly* layout of CTEX 0.2+,  
+as well as giving a visual overview of this layout.
 
 ## OUTLINE
 
