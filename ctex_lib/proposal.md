@@ -1,6 +1,6 @@
 ## INTRODUCTION
 
-This data representation is built around avx512f.
+This data representation is built around SIMD and easily supports up to avx512.
 At the time of this being created, it is the latest and greatest.
 While future technologies might prove to be better,
 designing around likely, yet still theoretical, future hardware
