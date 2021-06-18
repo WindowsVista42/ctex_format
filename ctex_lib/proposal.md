@@ -1,10 +1,7 @@
 ## INTRODUCTION
 
 This data representation is built around SIMD and easily supports up to avx512.  
-At the time of this being created, it is the latest and greatest.
-While future technologies might prove to be better,
-designing around likely, yet still theoretical, future hardware
-would be even more overkill than this current approach is.
+At the time of this being created, it is the latest and greatest.  
 
 The following section gives a brief overview of the *simd friendly* layout of CTEX 0.2+.  
 The section after gives a visual overview of the layout.
