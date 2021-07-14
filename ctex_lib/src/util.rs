@@ -1,12 +1,12 @@
 use crate::flags::Flags;
-use crate::{Image, Compression, decode_raw, __encode, encode};
-use std::io::{Write, Read};
+use crate::{Compression, decode_raw};
+use std::io::Read;
 
 use anyhow::Result;
 use lz4_flex::decompress;
 
 #[cfg(feature = "encode_util")]
-use image::GenericImageView;
+use {std::{Image, __encode, encode, io::Write}, image::GenericImageView};
 
 #[cfg(feature = "encode_util")]
 pub fn write_ctex(input_path: &str, output_path: &str, flags: Flags) -> Result<()> {
